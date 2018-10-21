@@ -11,43 +11,64 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
+
 @Controller
 public class EmpController {
     @Autowired
     EmpDao dao;
+
     @RequestMapping("addemp")
-    public ModelAndView showEmpform(){
-        return new ModelAndView("addemp","command",new Emp());
+    public ModelAndView showEmpform() {
+        return new ModelAndView("addemp", "command", new Emp());
     }
 
     @RequestMapping(value = "save", method = RequestMethod.POST)
     //note that we wanna  to bind data from the request and add it to the model implicitly emp will use in viewEmployees.jsp
-    public ModelAndView addemployee(@ModelAttribute("emp") Emp em){
+    public ModelAndView addemployee(@ModelAttribute("emp") Emp em) {
         dao.save(em);
         return new ModelAndView("redirect:/viewEmployees");
     }
+
     @RequestMapping("viewEmployees")
-    public ModelAndView showAll(){
+    public ModelAndView showAll() {
         List<Emp> empList = dao.showAllEmployeeswithRowMapper();
         return new ModelAndView("viewEmployees", "list", empList);
     }
-    @RequestMapping(value ="editemp/{id}", method = RequestMethod.GET)
-    public ModelAndView edit(@PathVariable int id){
+
+    @RequestMapping(value = "editemp/{id}", method = RequestMethod.GET)
+    public ModelAndView edit(@PathVariable int id) {
         Emp mybean = dao.getEmpById(id);
         return new ModelAndView("editemp", "command", mybean);
 
     }
+
     @RequestMapping("deleteemp/{id}")
-    public ModelAndView delete(@PathVariable int id){
+    public ModelAndView delete(@PathVariable int id) {
         dao.delete(id);
         return new ModelAndView("redirect:/viewEmployees");
 
     }
+
     @RequestMapping(value = "editsave", method = RequestMethod.POST)
     //note that we wanna  to bind data from the request and add it to the model implicitly emp will use in viewEmployees.jsp
-    public ModelAndView saveEditemp(@ModelAttribute("emp") Emp em){
+    public ModelAndView saveEditemp(@ModelAttribute("emp") Emp em) {
         dao.update(em);
         return new ModelAndView("redirect:/viewEmployees");
+    }
+
+    @RequestMapping(value = "/viewEmployees/{Pageid}", method = RequestMethod.GET)
+    public ModelAndView Paginator(@PathVariable int Pageid) {
+      int total=5;
+
+      if(Pageid == 1){
+
+      }
+      else{
+          Pageid = (Pageid-1)*total+1;
+      }
+
+        List<Emp> list = dao.getEmpByPage(Pageid,total);
+        return new ModelAndView("viewEmployees","list",list);
     }
 
 }

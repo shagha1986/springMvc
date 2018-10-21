@@ -52,5 +52,19 @@ public Emp getEmpById(final int id){
     Emp emp = (Emp) jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper(Emp.class));
     return emp;
 }
+public List<Emp> getEmpByPage(int pageId, int total){
+        String sql = "select * from emp0 limit "+(pageId)+","+total;
+        return jdbcTemplate.query(sql, new RowMapper<Emp>() {
+            @Override
+            public Emp mapRow(ResultSet resultSet, int i) throws SQLException {
+                Emp RmpEmp= new Emp();
+                RmpEmp.setId(resultSet.getInt(1));
+                RmpEmp.setName(resultSet.getString(2));
+                RmpEmp.setAge(resultSet.getInt(3));
+                RmpEmp.setSalary(resultSet.getInt(4));
+                return RmpEmp;
+            }
+        });
+}
 
 }
